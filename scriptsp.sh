@@ -18,27 +18,42 @@ echo --------------------
 cmd="cd ControlSet001\Services\BTHPORT\Parameters\Keys\n cd $var\nls\nq\n"
 result2=$(echo -e "$cmd" | chntpw -e SYSTEM)
 #echo $result2
-t=${result2#*"REG_BINARY"}
-ba=${t%"(...)"*}
-echo $ba | sed 's/<//g' | sed 's/>//g'
+ba=${result2#*"REG_BINARY"}
+ba=${ba#*"REG_BINARY"}
+ba=${ba%"(...)"*}
+
+
+ba1=${ba%"REG_BINARY"*}
+ba1=${ba%"REG_BINARY"*}
+
+ba2=${ba#*"REG_BINARY"}
+
+ba2=${ba2#*"<"}
+ba2=${ba2%">"*}
+ba1=${ba1#*"<"}
+ba1=${ba1%">"*}
+
+echo $ba1
+echo $ba2
 echo Enter device address:
 read var2
 cmd2="cd ControlSet001\Services\BTHPORT\Parameters\Keys\n cd $var\nhex $var2\nq\n"
 result=$(echo -e "$cmd2" | chntpw -e SYSTEM)
-echo $result
+#echo $result
 
 if [[ $result == *":00000"* ]]; then
   echo "It's there!"
   tmp=${result#*":00000"}
   b=${tmp%"g@..."*}
   key=$(echo $b | sed 's/ //g')
-  echo $key
 fi
 
-varp=$(echo $var | sed -e 's/../&:/g' -e 's/:$//')
-varp=$(echo ${varp^^})
-varp2=$(echo $var2 | sed -e 's/../&:/g' -e 's/:$//')
-varp2=$(echo ${varp2^^})
+#varp=$(echo $var | sed -e 's/../&:/g' -e 's/:$//')
+varp=$(echo ${var^^} | sed 's!\.!!g;s!\(..\)!\1:!g;s!:$!!')
+
+varp2=$(echo ${var2^^} | sed 's!\.!!g;s!\(..\)!\1:!g;s!:$!!')
+
+
 cd /var/lib/bluetooth/
 cd $varp
 cd $varp2
@@ -48,11 +63,8 @@ value=${value%"Type"*}
 if [[ $value1 == *"$value"* ]]; then
     #sed 's/$value/$key/' info > output.txt
     file="info"
-    echo $key
-    echo $value
     string2=${value#"|"}
     v2=${value::-1}
-    echo $v2
     sed "s|$v2|$key|gi" info > info2
     rm info
     mv info2 info
