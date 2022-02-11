@@ -49,29 +49,30 @@ if [[ $result == *":00000"* ]]; then
 fi
 
 #varp=$(echo $var | sed -e 's/../&:/g' -e 's/:$//')
-echo 1
 varp=$(echo ${var^^} | sed -e 's!\.!!g;s!\(..\)!\1:!g;s!:$!!')
-echo 2
+
 varp2=$(echo ${var2^^} | sed -e 's!\.!!g;s!\(..\)!\1:!g;s!:$!!')
-echo 3
 
 cd /var/lib/bluetooth/
 cd $varp
 cd $varp2
-echo 4
 value1=`cat info`
 
 value=${value1#*"Key="}
 value=${value%"Type"*}
-echo 5
+echo 1
 if [[ $value1 == *"$value"* ]]; then
+    echo 2
+
     #sed 's/$value/$key/' info > output.txt
     file="info"
     string2=${value#"|"}
+    echo 3
     #echo $value
     v2=${value::-1}
     #echo $v2
-    sed "s|$v2|$key|gi" info > info2
+    sed -e "s|$v2|$key|gi" info > info2
+    echo 4
     rm info
     mv info2 info
     #sed -i "s/$value/ZZ/g" "$file"
