@@ -8,7 +8,7 @@ Requirements:
 Usage:
 ```
 git clone https://github.com/Toasty06/Bluetooth-Script/
-cd Bluetooth Script/
+cd Bluetooth-Script/
 sudo bash script.sh
 ```
 - Pair the device with your Windows Install
